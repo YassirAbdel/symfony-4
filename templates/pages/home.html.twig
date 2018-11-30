@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+{% block title 'Agence loren ipsum' %}
+{% block body %}
+    <div class="jumbotron text-center">
+        <h1>Agence loren ipsum</h1>
+        <p>
+            Quanta autem vis amicitiae sit, ex hoc intellegi maxime potest, quod ex infinita societate generis humani, quam conciliavit ipsa natura, ita contracta res est et adducta in angustum ut omnis caritas aut inter duos aut inter paucos iungeretur.
+        </p>
+    </div>
+    <div class="container">
+        <h2>Les derniers bien :</h2>
+        <div class="row flex">
+            {% for property in properties %}
+                <div class="col-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <a href="{{ path('property.show', {id: property.id, slug: property.slug})}}">{{ property.title }}</a>
+                            </h5>
+                            <p class="card-text">{{ property.City }} ({{ property.PostalCode}})</p>
+                            <div class="text-primary" style="font-weight: bold;font-size: 2rem;">{{ property.FormatPrice }} €</div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </di>
+{% endblock %}
