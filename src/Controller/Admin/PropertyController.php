@@ -60,6 +60,7 @@ class PropertyController extends AbstractController {
             // Avant de flasher, on dit à em de persiter
             $this->em->persist($property);
             $this->em->flush();
+            // On ajoute un type de message flash
             $this->addFlash('success', 'Bien créé avec succès');
             return $this->redirectToRoute('admin.property.index');
         }
