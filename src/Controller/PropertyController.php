@@ -8,6 +8,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Component\HttpFoundation\Request;
+use App\Entity\PropertySearch;
+use App\Form\PropertySearchType;
 
 
 class PropertyController extends AbstractController {
@@ -35,55 +39,28 @@ class PropertyController extends AbstractController {
      * @return Response
      */
     
-    public function index() : Response
+    public function index(PaginatorInterface $paginator, Request $request) : Response
     {
-        /** 
-         * Inserer 1 enregistrement
-        $property = new Property();
-        $property->setTitle('Mon premier bien')
-                 ->setPrice(20000)
-                 ->setRooms(4)
-                 ->setBedrooms(3)
-                 ->setDescription('une petite description')
-                 ->setSurface(60)
-                 ->setFloor(4)
-                 ->setHeat(1)
-                 ->setCity('Montpellier')
-                 ->setAdress('15 boulevard Gambetta')
-                 ->setPostalCode('34000');
+        // 1. on crée un objet contenant une entité PropertySearch vide
+        $search = new PropertySearch;
         
-        $em = $this->getDoctrine()->getManager();
-        $em->persist($property);
-        $em->flush();
-        **/ 
+        // 2. On crée un formulaire correspondant
+        $form = $this->createForm(PropertySearchType::class, $search);
         
-        /** 1ere méthode d'appeler une repository **
-        $repository = $this->getDoctrine()->getRepository(Property::class);
-        dump($repository);
-         * 
-         */
-        /** 1 bien 
-            $property = $this->repository->find(1);
-         */
-        /* Tous les biens  
-            $property = $this->repository->findAll();
-            dump($property);
-         */
-        /* Recherche par tableau 
-            $property = $this->repository->findOneBy(['floor' => 4]);
-        */
+        // 3. On précise qu'il doit gérér la requête
+        $form->handleRequest($request);
         
-        /* Met a jour l'attribut Sold 
-        $property = $this->repository->findAll();
-        $property[0]->setSold(false);
-        $this->em->flush();
-        */
-        
-        /* Tous les biens ne sont pas vendus */
-        $properties = $this->repository->findAllVisible();
+        $properties = $paginator->paginate(
+                $this->repository->findAllVisibleQuery($search),
+                $request->query->getInt('page', 1),
+                12
+                );
         
         return $this->render('property/index.html.twig', [
-            'current_menu' => 'properties'
+            'current_menu' => 'properties',
+            'properties' => $properties,
+            // 4. on envoie le formulaire à la vue
+            'form' => $form->createView()
             
         ]);
     }

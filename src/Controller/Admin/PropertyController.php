@@ -52,7 +52,7 @@ class PropertyController extends AbstractController {
         $property = new Property();
         // on crée un formulaire
         $form = $this->createForm(PropertyType::class, $property);
-        // on passe la requete
+         // On précise qu'il doit gérér la requête
         $form->handleRequest($request);
         
         // est-ce que le requete a été envoyée ? et est-ce que ce formulaire est validé ?
