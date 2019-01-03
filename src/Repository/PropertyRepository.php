@@ -30,7 +30,6 @@ class PropertyRepository extends ServiceEntityRepository
         $query =  $this->findVisibleQuery();
         
         if($search->getMaxPrice())
-         
         {
             $query
                 ->andwhere('p.price <= :minprice')
@@ -39,12 +38,23 @@ class PropertyRepository extends ServiceEntityRepository
         }
         
         if($search->getMinSurface())
-         
         {
             $query
                 ->andwhere('p.surface >= :minsurface')
                 ->setParameter('minsurface', $search->getMinSurface())
             ;
+        }
+        
+        if($search->getOptions()->count() > 0)
+        {
+            $k = 0;
+            foreach ($search->getOptions() as $option){
+                $k++;
+                $query = $query
+                        ->andWhere(":option$k MEMBER OF p.options")
+                        ->setParameter("option$k", $option)
+                ;
+            }
         }
         
         return $query->getQuery();
